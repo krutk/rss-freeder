@@ -114,22 +114,45 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
     }
   }
 
-  const openLink = async (item: any, service: 'archive' | 'smry' | 'bare') => {
-    const link = service === 'bare' ? item.link : service === 'archive' ? `https://archive.is/${item.link}` : `https://smry.ai/${item.link}`
-    window.open(link, '_blank')
+  // const openLink = async (item: any, service: 'archive' | 'smry' | 'bare') => {
+  //   const link = service === 'bare' ? item.link : service === 'archive' ? `https://archive.is/${item.link}` : `https://smry.ai/${item.link}`
+  //   window.open(link, '_blank')
 
-    // Check if this exact item+service combination already exists in history for today
+  //   // Check if this exact item+service combination already exists in history for today
+  //   const isDuplicate = history.some(historyItem =>
+  //     historyItem.link === item.link &&
+  //     historyItem.service === service &&
+  //     new Date(historyItem.openedAt).toDateString() === new Date().toDateString()
+  //   )
+
+  //   if (!isDuplicate) {
+  //     await addToHistory({ ...item, openedAt: new Date().toISOString(), service }, user.id)
+  //     loadHistory()
+  //   }
+  // }
+  const openLink = async (item: any, service: 'archive' | 'smry' | 'bare') => {
+    const link =
+      service === 'bare'
+        ? item.link
+        : service === 'archive'
+          ? `https://archive.is/${item.link}`
+          : `https://smry.ai/${item.link}`;
+
+    window.open(link, '_blank');
+
+    // Check if this item already exists in history for today
     const isDuplicate = history.some(historyItem =>
       historyItem.link === item.link &&
-      historyItem.service === service &&
       new Date(historyItem.openedAt).toDateString() === new Date().toDateString()
-    )
+    );
 
     if (!isDuplicate) {
-      await addToHistory({ ...item, openedAt: new Date().toISOString(), service }, user.id)
-      loadHistory()
+      // Add to history, regardless of the service used
+      await addToHistory({ ...item, openedAt: new Date().toISOString(), service }, user.id);
+      loadHistory();
     }
-  }
+  };
+
 
   return (
     <div className="space-y-6 animate-in">
