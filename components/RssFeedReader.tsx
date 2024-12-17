@@ -118,7 +118,7 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
     const link = service === 'bare' ? item.link : service === 'archive' ? `https://archive.is/${item.link}` : `https://smry.ai/${item.link}`
     window.open(link, '_blank')
 
-    // Check if this exact item+service combination already exists in history
+    // Check if this exact item+service combination already exists in history for today
     const isDuplicate = history.some(historyItem =>
       historyItem.link === item.link &&
       historyItem.service === service &&
@@ -285,7 +285,11 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
                       {item.contentSnippet}
                     </p>
                     <div className="flex gap-2 mt-4">
-                      <Button onClick={() => openLink(item, 'smry')} variant="outline" size="sm">
+                      <Button onClick={() => window.open(item.link, '_blank')} variant="outline" size="sm">
+                        <Icons.read className="mr-2 h-4 w-4" />
+                        Read Original
+                      </Button>
+                      <Button onClick={() => window.open(`https://smry.ai/${item.link}`, '_blank')} variant="outline" size="sm">
                         <Icons.read className="mr-2 h-4 w-4" />
                         Read in Smry.ai
                       </Button>
