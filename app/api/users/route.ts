@@ -86,11 +86,56 @@
 //   return NextResponse.json(newUser);
 // }
 
+// import { NextResponse } from "next/server";
+// import clientPromise from "@/lib/mongodb";
+
+// export async function GET(request: Request) {
+//   const { searchParams } = new URL(request.url);
+//   const username = searchParams.get("username");
+//   const password = searchParams.get("password");
+
+//   const client = await clientPromise;
+//   const db = client.db("rssReader");
+//   const user = await db.collection("users").findOne({ username, password });
+
+//   if (user) {
+//     return NextResponse.json({
+//       id: user._id.toString(),
+//       username: user.username,
+//     });
+//   } else {
+//     return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+//   }
+// }
+
+// export async function POST(request: Request) {
+//   const { username, password } = await request.json();
+
+//   const client = await clientPromise;
+//   const db = client.db("rssReader");
+//   const existingUser = await db.collection("users").findOne({ username });
+
+//   if (existingUser) {
+//     return NextResponse.json(
+//       { error: "Username already exists" },
+//       { status: 400 }
+//     );
+//   }
+
+//   const result = await db.collection("users").insertOne({ username, password });
+//   const newUser = { id: result.insertedId.toString(), username };
+
+//   return NextResponse.json(newUser);
+// }
+
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+  // Ensure the URL is absolute
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const { searchParams } = new URL(request.url, baseUrl);
+
   const username = searchParams.get("username");
   const password = searchParams.get("password");
 
