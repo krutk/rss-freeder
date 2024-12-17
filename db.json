@@ -1,0 +1,45 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "urie.k@appwrk.com",
+      "password": "urie123"
+    }
+  ],
+  "feeds": [
+    {
+      "id": 1,
+      "url": "https://medium.com/feed/tag/nextjs",
+      "userId": 1
+    },
+    {
+      "id": 2,
+      "url": "https://stackoverflow.blog/feed/",
+      "userId": 1
+    }
+  ],
+  "history": [
+    {
+      "id": 1,
+      "creator": "Eira May",
+      "title": "Legal advice from an AI is illegal",
+      "link": "https://stackoverflow.blog/2024/12/17/legal-advice-from-an-ai-is-illegal/",
+      "pubDate": "Tue, 17 Dec 2024 08:40:00 GMT",
+      "dc:creator": "Eira May",
+      "content": "Mark Doble, CEO of Alexi, an AI-powered litigation platform, joins Ben to talk about GenAI’s transformative effect on the legal world. Their conversation touches on the importance of ensuring accurate results and eliminating hallucinations when AI tools are used for legal work, how lawyers (like the rest of us) can adapt to GenAI, and what Alexi’s tech stack looks like.",
+      "contentSnippet": "Mark Doble, CEO of Alexi, an AI-powered litigation platform, joins Ben to talk about GenAI’s transformative effect on the legal world. Their conversation touches on the importance of ensuring accurate results and eliminating hallucinations when AI tools are used for legal work, how lawyers (like the rest of us) can adapt to GenAI, and what Alexi’s tech stack looks like.",
+      "guid": "e291b0d9-ca35-4ce7-bf8a-c7b2b4bc4c99",
+      "categories": [
+        "se-tech",
+        "se-stackoverflow",
+        "podcast",
+        "ai",
+        "generative-ai"
+      ],
+      "isoDate": "2024-12-17T08:40:00.000Z",
+      "openedAt": "2024-12-17T13:19:02.440Z",
+      "service": "smry",
+      "userId": 1
+    }
+  ]
+}
