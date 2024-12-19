@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'RSS Feed Reader',
+  title: 'RSS Freeder',
   description: 'Read RSS feeds and open links in archive.is or smry.ai',
 }
 

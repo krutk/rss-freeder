@@ -33,20 +33,24 @@ export default function Home() {
   if (loading) {
     return null // Return nothing while checking localStorage
   }
-
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center mb-8">
-          <Icons.rss className="h-8 w-8 text-primary mr-2" />
-          <h1 className="text-3xl font-bold tracking-tight">RSS Freeder</h1>
+    <>
+      <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+      </head>
+      <main className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+        <div className="container mx-auto px-4 pb-8">
+          <div className="flex items-center justify-center mb-1">
+            <img src="/icon.svg" alt="RSS Freeder Logo" className="h-36 w-36" />
+            {/* <h1 className="text-3xl font-bold tracking-tight">RSS Freeder</h1> */}
+          </div>
+          {user ? (
+            <RssFeedReader user={user} onLogout={handleLogout} />
+          ) : (
+            <Auth onLogin={handleLogin} />
+          )}
         </div>
-        {user ? (
-          <RssFeedReader user={user} onLogout={handleLogout} />
-        ) : (
-          <Auth onLogin={handleLogin} />
-        )}
-      </div>
-    </main>
+      </main>
+    </>
   )
 }
