@@ -1,107 +1,185 @@
-'use server'
+"use server";
 
-import Parser from 'rss-parser'
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import Parser from "rss-parser";
 
-const parser = new Parser()
+const parser = new Parser();
 
-export async function fetchRssFeed(url: string, page: number = 1, itemsPerPage: number = 10) {
+export async function fetchRssFeed(
+  url: string,
+  page: number = 1,
+  itemsPerPage: number = 10
+) {
   try {
-    const feed = await parser.parseURL(url)
-    const startIndex = (page - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-    const paginatedItems = feed.items.slice(startIndex, endIndex)
-    return { 
-      success: true, 
+    const feed = await parser.parseURL(url);
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedItems = feed.items.slice(startIndex, endIndex);
+    return {
+      success: true,
       feed: {
         ...feed,
-        items: paginatedItems
+        items: paginatedItems,
       },
-      hasMore: endIndex < feed.items.length
-    }
+      hasMore: endIndex < feed.items.length,
+    };
   } catch (error) {
-    console.error('Error fetching RSS feed:', error)
-    return { success: false, error: 'Failed to fetch RSS feed' }
+    console.error("Error fetching RSS feed:", error);
+    return { success: false, error: "Failed to fetch RSS feed" };
   }
 }
 
 export async function registerUser(username: string, password: string) {
   try {
-    const response = await fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    })
-    if (!response.ok) throw new Error('Failed to register user')
-    return { success: true }
+    const response = await fetch("/api/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok) throw new Error("Failed to register user");
+    return { success: true };
   } catch (error) {
-    console.error('Error registering user:', error)
-    return { success: false, error: 'Failed to register user' }
+    console.error("Error registering user:", error);
+    return { success: false, error: "Failed to register user" };
   }
 }
 
 export async function loginUser(username: string, password: string) {
   try {
-    const response = await fetch(`/api/users?username=${username}&password=${password}`)
-    if (!response.ok) throw new Error('Failed to login')
-    const user = await response.json()
-    return { success: true, user }
+    const response = await fetch(
+      `/api/users?username=${username}&password=${password}`
+    );
+    if (!response.ok) throw new Error("Failed to login");
+    const user = await response.json();
+    return { success: true, user };
   } catch (error) {
-    console.error('Error logging in:', error)
-    return { success: false, error: 'Failed to login' }
+    console.error("Error logging in:", error);
+    return { success: false, error: "Failed to login" };
   }
 }
 
 export async function addFeed(url: string, userId: number) {
   try {
-    const response = await fetch('/api/feeds', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url, userId })
-    })
-    if (!response.ok) throw new Error('Failed to add feed')
-    return { success: true }
+    const response = await fetch("/api/feeds", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, userId }),
+    });
+    if (!response.ok) throw new Error("Failed to add feed");
+    return { success: true };
   } catch (error) {
-    console.error('Error adding feed:', error)
-    return { success: false, error: 'Failed to add feed' }
+    console.error("Error adding feed:", error);
+    return { success: false, error: "Failed to add feed" };
   }
 }
 
 export async function getFeeds(userId: number) {
   try {
-    const response = await fetch(`/api/feeds?userId=${userId}`)
-    if (!response.ok) throw new Error('Failed to fetch feeds')
-    const feeds = await response.json()
-    return { success: true, feeds }
+    const response = await fetch(`/api/feeds?userId=${userId}`);
+    if (!response.ok) throw new Error("Failed to fetch feeds");
+    const feeds = await response.json();
+    return { success: true, feeds };
   } catch (error) {
-    console.error('Error fetching feeds:', error)
-    return { success: false, error: 'Failed to fetch feeds' }
+    console.error("Error fetching feeds:", error);
+    return { success: false, error: "Failed to fetch feeds" };
   }
 }
 
 export async function addToHistory(item: any, userId: number) {
   try {
-    const response = await fetch('/api/history', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...item, userId })
-    })
-    if (!response.ok) throw new Error('Failed to add to history')
-    return { success: true }
+    const response = await fetch("/api/history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...item, userId }),
+    });
+    if (!response.ok) throw new Error("Failed to add to history");
+    return { success: true };
   } catch (error) {
-    console.error('Error adding to history:', error)
-    return { success: false, error: 'Failed to add to history' }
+    console.error("Error adding to history:", error);
+    return { success: false, error: "Failed to add to history" };
   }
 }
 
 export async function getHistory(userId: number) {
   try {
-    const response = await fetch(`/api/history?userId=${userId}`)
-    if (!response.ok) throw new Error('Failed to fetch history')
-    const history = await response.json()
-    return { success: true, history }
+    const response = await fetch(`/api/history?userId=${userId}`);
+    if (!response.ok) throw new Error("Failed to fetch history");
+    const history = await response.json();
+    return { success: true, history };
   } catch (error) {
-    console.error('Error fetching history:', error)
-    return { success: false, error: 'Failed to fetch history' }
+    console.error("Error fetching history:", error);
+    return { success: false, error: "Failed to fetch history" };
   }
 }
 
+export async function addBookmark(item: any, userId: string) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("rssReader");
+    const result = await db.collection("bookmarks").insertOne({
+      userId,
+      title: item.title,
+      link: item.link,
+      contentSnippet: item.contentSnippet,
+      feedUrl: item.feedUrl,
+      createdAt: new Date(),
+    });
+    return { success: true, bookmarkId: result.insertedId.toString() };
+  } catch (error) {
+    console.error("Error adding bookmark:", error);
+    return { success: false, error: "Failed to add bookmark" };
+  }
+}
+
+export async function removeBookmark(bookmarkId: string, userId: string) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("rssReader");
+    const result = await db.collection("bookmarks").deleteOne({
+      _id: new ObjectId(bookmarkId),
+      userId,
+    });
+    if (result.deletedCount === 0) {
+      return { success: false, error: "Bookmark not found or unauthorized" };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Error removing bookmark:", error);
+    return { success: false, error: "Failed to remove bookmark" };
+  }
+}
+
+export async function getBookmarks(userId: string) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("rssReader");
+    const bookmarks = await db
+      .collection("bookmarks")
+      .find({ userId })
+      .sort({ createdAt: -1 })
+      .toArray();
+    return {
+      success: true,
+      bookmarks: bookmarks.map((bookmark) => ({
+        ...bookmark,
+        _id: bookmark._id.toString(),
+      })),
+    };
+  } catch (error) {
+    console.error("Error fetching bookmarks:", error);
+    return { success: false, error: "Failed to fetch bookmarks" };
+  }
+}
+
+export async function isBookmarked(userId: string, link: string) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("rssReader");
+    const bookmark = await db.collection("bookmarks").findOne({ userId, link });
+    return { success: true, isBookmarked: !!bookmark };
+  } catch (error) {
+    console.error("Error checking bookmark status:", error);
+    return { success: false, error: "Failed to check bookmark status" };
+  }
+}

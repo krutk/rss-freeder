@@ -1,4 +1,4 @@
-import { Loader2, RefreshCw, Plus, History, LogOut, Rss, Archive, Book, Pencil, Trash, TypeIcon as type, type LucideIcon, ChevronDown } from 'lucide-react'
+import { Loader2, RefreshCw, Plus, History, LogOut, Rss, Archive, Book, Pencil, Trash, ChevronDown, Bookmark, BookMarked, LucideIcon } from 'lucide-react'
 
 export type Icon = LucideIcon
 
@@ -13,5 +13,7 @@ export const Icons = {
   read: Book,
   edit: Pencil,
   trash: Trash,
-  chevronDown: ChevronDown
+  chevronDown: ChevronDown,
+  bookmark: Bookmark,
+  bookmarkFilled: BookMarked
 }

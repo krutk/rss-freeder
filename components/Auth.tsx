@@ -8,23 +8,54 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Label } from '@/components/ui/label'
 import { Icons } from '@/components/icons'
+
 interface AuthProps {
   onLogin: (user: any) => void
 }
 
 export default function Auth({ onLogin }: AuthProps) {
+  const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const validatePassword = (pass: string) => {
+    if (pass.length < 8) {
+      return "Password must be at least 8 characters long"
+    }
+    if (!/[A-Z]/.test(pass)) {
+      return "Password must contain at least one uppercase letter"
+    }
+    if (!/[a-z]/.test(pass)) {
+      return "Password must contain at least one lowercase letter"
+    }
+    if (!/[0-9]/.test(pass)) {
+      return "Password must contain at least one number"
+    }
+    return null
+  }
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError(null)
-    const result:any = await registerUser(username, password)
+
+    const passwordError = validatePassword(password)
+    if (passwordError) {
+      setError(passwordError)
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    setIsLoading(true)
+    const result: any = await registerUser(email, password)
     if (result.success) {
-      const loginResult:any = await loginUser(username, password)
+      const loginResult: any = await loginUser(email, password)
       if (loginResult.success) {
         onLogin(loginResult.user)
       } else {
@@ -40,7 +71,7 @@ export default function Auth({ onLogin }: AuthProps) {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    const result:any = await loginUser(username, password)
+    const result: any = await loginUser(email, password)
     if (result.success) {
       onLogin(result.user)
     } else {
@@ -54,7 +85,7 @@ export default function Auth({ onLogin }: AuthProps) {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
         <CardDescription>
-          Enter your email to access your RSS feeds
+          Enter your details to access your RSS feeds
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -70,8 +101,8 @@ export default function Auth({ onLogin }: AuthProps) {
                 <Input
                   id="email"
                   type="email"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="m@example.com"
                   required
                   className="w-full"
@@ -109,9 +140,22 @@ export default function Auth({ onLogin }: AuthProps) {
                 <Input
                   id="register-email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="m@example.com"
+                  required
+                  className="w-full"
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="register-username">Username</Label>
+                <Input
+                  id="register-username"
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="m@example.com"
+                  placeholder="johndoe"
                   required
                   className="w-full"
                   disabled={isLoading}
@@ -124,6 +168,21 @@ export default function Auth({ onLogin }: AuthProps) {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full"
+                  disabled={isLoading}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Password must be at least 8 characters long and contain uppercase, lowercase and numbers
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   className="w-full"
                   disabled={isLoading}
@@ -151,4 +210,3 @@ export default function Auth({ onLogin }: AuthProps) {
     </Card>
   )
 }
-
