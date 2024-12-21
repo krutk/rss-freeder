@@ -53,7 +53,7 @@ export default function Auth({ onLogin }: AuthProps) {
     }
 
     setIsLoading(true)
-    const result: any = await registerUser(email, password)
+    const result: any = await registerUser(username, email, password)
     if (result.success) {
       const loginResult: any = await loginUser(email, password)
       if (loginResult.success) {

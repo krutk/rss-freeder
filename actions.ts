@@ -384,7 +384,11 @@ export async function fetchRssFeed(
   }
 }
 
-export async function registerUser(username: string, password: string) {
+export async function registerUser(
+  username: string,
+  email: string,
+  password: string
+) {
   try {
     const client = await clientPromise;
     const db = client.db("rssReader");
@@ -394,7 +398,7 @@ export async function registerUser(username: string, password: string) {
     }
     const result = await db
       .collection("users")
-      .insertOne({ username, password });
+      .insertOne({ username, email, password });
 
     // Add default feeds for the new user
     await Promise.all(
@@ -414,11 +418,11 @@ export async function registerUser(username: string, password: string) {
   }
 }
 
-export async function loginUser(username: string, password: string) {
+export async function loginUser(email: string, password: string) {
   try {
     const client = await clientPromise;
     const db = client.db("rssReader");
-    const user = await db.collection("users").findOne({ username, password });
+    const user = await db.collection("users").findOne({ email, password });
     if (!user) {
       return { success: false, error: "Invalid credentials" };
     }

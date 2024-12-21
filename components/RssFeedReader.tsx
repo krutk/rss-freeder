@@ -260,23 +260,23 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
   return (
     <div className="space-y-4 animate-in">
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
+        {/*<div className="flex items-center space-x-2">
           <Icons.rss className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-bold">RSS Freeder</h1>
-        </div>
-        <div className="flex items-center space-x-2">
-          <p className="text-sm text-muted-foreground">
-            Welcome, {user.username}
-          </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onLogout}
-          >
-            <Icons.logout className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
-        </div>
+        </div>*/}
+        {/* <div className="flex items-center space-x-2"> */}
+        <p className="text-sm text-muted-foreground">
+          Welcome, {user.username}
+        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onLogout}
+        >
+          <Icons.logout className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
+        {/* </div> */}
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
