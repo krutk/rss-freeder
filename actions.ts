@@ -557,3 +557,41 @@ export async function getHistory(userId: string) {
     return { success: false, error: "Failed to fetch history" };
   }
 }
+
+export async function fetchAllFeeds(
+  userId: string,
+  page: number = 1,
+  itemsPerPage: number = 10
+) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("rssReader");
+    const feeds = await db.collection("feeds").find({ userId }).toArray();
+
+    let allItems: any[] = [];
+    for (const feed of feeds) {
+      const feedData = await parser.parseURL(feed.url);
+      allItems = [...allItems, ...feedData.items];
+    }
+
+    // Sort all items by date
+    allItems.sort(
+      (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+    );
+
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedItems = allItems.slice(startIndex, endIndex);
+
+    return {
+      success: true,
+      feed: {
+        items: paginatedItems,
+      },
+      hasMore: endIndex < allItems.length,
+    };
+  } catch (error) {
+    console.error("Error fetching all feeds:", error);
+    return { success: false, error: "Failed to fetch all feeds" };
+  }
+}
