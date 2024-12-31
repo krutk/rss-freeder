@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'RSS Freeder',
-  description: 'Read RSS feeds and open links in archive.is or smry.ai',
+  description: 'A modern RSS feed reader with bookmarking, history tracking, and paywall removal via SMRY.AI integration. Streamline your content consumption in one place.',
 }
 
 export default function RootLayout({
