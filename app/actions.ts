@@ -30,14 +30,17 @@ export async function fetchRssFeed(
   }
 }
 
-export async function registerUser(username: string, password: string) {
+export async function registerUser(username: string, email: string, password: string) {
   try {
     const response = await fetch("/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, email, password }),
     });
-    if (!response.ok) throw new Error("Failed to register user");
+    if (!response.ok) {
+      const error = await response.json();
+      return { success: false, error: error.error || "Failed to register user" };
+    }
     return { success: true };
   } catch (error) {
     console.error("Error registering user:", error);
@@ -45,17 +48,66 @@ export async function registerUser(username: string, password: string) {
   }
 }
 
-export async function loginUser(username: string, password: string) {
+export async function loginUser(email: string, password: string) {
   try {
     const response = await fetch(
-      `/api/users?username=${username}&password=${password}`
+      `/api/users?email=${email}&password=${password}`
     );
-    if (!response.ok) throw new Error("Failed to login");
+    if (!response.ok) {
+      const error = await response.json();
+      return { success: false, error: error.error || "Failed to login" };
+    }
     const user = await response.json();
     return { success: true, user };
   } catch (error) {
     console.error("Error logging in:", error);
     return { success: false, error: "Failed to login" };
+  }
+}
+
+export async function forgotPassword(email: string) {
+  try {
+    const response = await fetch("/api/users", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "forgot-password", email }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      return { success: false, error: error.error || "Failed to send reset email" };
+    }
+
+    const result = await response.json();
+    return { 
+      success: true, 
+      message: result.message,
+      resetToken: result.resetToken // In production, this would be sent via email
+    };
+  } catch (error) {
+    console.error("Error sending reset email:", error);
+    return { success: false, error: "Failed to send reset email" };
+  }
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+  try {
+    const response = await fetch("/api/users", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "reset-password", token, newPassword }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      return { success: false, error: error.error || "Failed to reset password" };
+    }
+
+    const result = await response.json();
+    return { success: true, message: result.message };
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    return { success: false, error: "Failed to reset password" };
   }
 }
 
