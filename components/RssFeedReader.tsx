@@ -337,7 +337,7 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
                 />
                 <Button type="submit" size="sm" className="shrink-0">
                   <Icons.plus className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-2">Add</span>
+                  <span className="hidden sm:inline ml-1">Add</span>
                 </Button>
               </form>
             </CardContent>
@@ -524,7 +524,7 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
                           onClick={() => openLink(item, 'smry')}
                           variant="outline"
                           size="sm"
-                          className="w-full sm:w-auto"
+                          className="w-full sm:w-auto hover:bg-primary/10 hover:text-primary"
                         >
                           <Icons.read className="mr-2 h-4 w-4 text-primary" />
                           Read in Smry.ai
@@ -533,7 +533,7 @@ export default function RssFeedReader({ user, onLogout }: RssFeedReaderProps) {
                           onClick={() => handleBookmark(item)}
                           variant="outline"
                           size="sm"
-                          className="w-full sm:w-auto"
+                          className="w-full sm:w-auto hover:bg-primary/10 hover:text-primary"
                         >
                           {bookmarkedItems.has(item.link) ? (
                             <Icons.bookmark fill='true' className="mr-1 h-4 w-4 text-primary fill-primary" />
