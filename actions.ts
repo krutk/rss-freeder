@@ -5,7 +5,7 @@ import clientPromise from "./lib/mongodb";
 import { ObjectId } from "mongodb";
 
 const parser = new Parser();
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 const DEFAULT_FEEDS = [
   "https://developers.googleblog.com/feeds/posts/default",
@@ -288,8 +288,7 @@ export async function forgotPassword(email: string) {
     const result = await response.json();
     return { 
       success: true, 
-      message: result.message,
-      resetToken: result.resetToken // In production, this would be sent via email
+      message: result.message
     };
   } catch (error) {
     console.error("Error sending reset email:", error);

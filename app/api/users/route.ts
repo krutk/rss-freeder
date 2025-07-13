@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import crypto from "crypto";
+import { sendPasswordResetEmail, sendWelcomeEmail } from "@/lib/email";
 
 export async function GET(request: Request) {
   // Ensure the URL is absolute
@@ -62,6 +63,14 @@ export async function POST(request: Request) {
     email 
   };
 
+  // Send welcome email (don't fail registration if email fails)
+  try {
+    await sendWelcomeEmail(email, username);
+  } catch (error) {
+    console.error('Failed to send welcome email:', error);
+    // Continue with registration even if email fails
+  }
+
   return NextResponse.json(newUser);
 }
 
@@ -91,11 +100,21 @@ export async function PUT(request: Request) {
       }
     );
 
-    // In a real app, you would send an email here
-    // For demo purposes, we'll return the token
+    // Send password reset email
+    const emailResult = await sendPasswordResetEmail({
+      email,
+      resetToken,
+      username: user.username
+    });
+
+    if (!emailResult.success) {
+      return NextResponse.json({ 
+        error: "Failed to send reset email. Please try again." 
+      }, { status: 500 });
+    }
+
     return NextResponse.json({ 
-      message: "Password reset token generated",
-      resetToken // In production, this would be sent via email
+      message: "Password reset email sent successfully. Please check your inbox."
     });
   }
 

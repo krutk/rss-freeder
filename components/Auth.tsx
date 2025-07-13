@@ -95,7 +95,7 @@ export default function Auth({ onLogin }: AuthProps) {
     
     const result: any = await forgotPassword(email)
     if (result.success) {
-      setSuccess(`Reset instructions sent! Use this token: ${result.resetToken}`)
+      setSuccess(result.message)
       setActiveTab('reset')
     } else {
       setError(result.error)
@@ -294,7 +294,7 @@ export default function Auth({ onLogin }: AuthProps) {
                   disabled={isLoading}
                 />
                 <p className="text-xs text-muted-foreground">
-                  Enter your email address and we'll send you a reset token
+                  Enter your email address and we'll send you a password reset token
                 </p>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
@@ -319,7 +319,7 @@ export default function Auth({ onLogin }: AuthProps) {
                   type="text"
                   value={resetToken}
                   onChange={(e) => setResetToken(e.target.value)}
-                  placeholder="Enter the reset token from your email"
+                  placeholder="Enter the reset token from the email we sent you"
                   required
                   className="w-full"
                   disabled={isLoading}

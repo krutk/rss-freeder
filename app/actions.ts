@@ -5,6 +5,7 @@ import { ObjectId } from "mongodb";
 import Parser from "rss-parser";
 
 const parser = new Parser();
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export async function fetchRssFeed(
   url: string,
@@ -32,7 +33,7 @@ export async function fetchRssFeed(
 
 export async function registerUser(username: string, email: string, password: string) {
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch(`${BASE_URL}/api/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email, password }),
@@ -51,7 +52,7 @@ export async function registerUser(username: string, email: string, password: st
 export async function loginUser(email: string, password: string) {
   try {
     const response = await fetch(
-      `/api/users?email=${email}&password=${password}`
+      `${BASE_URL}/api/users?email=${email}&password=${password}`
     );
     if (!response.ok) {
       const error = await response.json();
@@ -67,7 +68,7 @@ export async function loginUser(email: string, password: string) {
 
 export async function forgotPassword(email: string) {
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch(`${BASE_URL}/api/users`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "forgot-password", email }),
@@ -81,8 +82,7 @@ export async function forgotPassword(email: string) {
     const result = await response.json();
     return { 
       success: true, 
-      message: result.message,
-      resetToken: result.resetToken // In production, this would be sent via email
+      message: result.message
     };
   } catch (error) {
     console.error("Error sending reset email:", error);
@@ -92,7 +92,7 @@ export async function forgotPassword(email: string) {
 
 export async function resetPassword(token: string, newPassword: string) {
   try {
-    const response = await fetch("/api/users", {
+    const response = await fetch(`${BASE_URL}/api/users`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "reset-password", token, newPassword }),
@@ -113,7 +113,7 @@ export async function resetPassword(token: string, newPassword: string) {
 
 export async function addFeed(url: string, userId: number) {
   try {
-    const response = await fetch("/api/feeds", {
+    const response = await fetch(`${BASE_URL}/api/feeds`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url, userId }),
@@ -128,7 +128,7 @@ export async function addFeed(url: string, userId: number) {
 
 export async function getFeeds(userId: number) {
   try {
-    const response = await fetch(`/api/feeds?userId=${userId}`);
+    const response = await fetch(`${BASE_URL}/api/feeds?userId=${userId}`);
     if (!response.ok) throw new Error("Failed to fetch feeds");
     const feeds = await response.json();
     return { success: true, feeds };
@@ -140,7 +140,7 @@ export async function getFeeds(userId: number) {
 
 export async function addToHistory(item: any, userId: number) {
   try {
-    const response = await fetch("/api/history", {
+    const response = await fetch(`${BASE_URL}/api/history`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...item, userId }),
@@ -155,7 +155,7 @@ export async function addToHistory(item: any, userId: number) {
 
 export async function getHistory(userId: number) {
   try {
-    const response = await fetch(`/api/history?userId=${userId}`);
+    const response = await fetch(`${BASE_URL}/api/history?userId=${userId}`);
     if (!response.ok) throw new Error("Failed to fetch history");
     const history = await response.json();
     return { success: true, history };
